@@ -789,18 +789,25 @@ const FinalGameRow = ({ game }) => {
 
 // ── Scrolling results list ────────────────────────────────────────────────────
 
+// Approx row heights (px) used to decide whether scrolling is needed.
+// Panel content area: 480 (widget) - 28 (panel padding) - 30 (header) ≈ 422px.
+const FINAL_ROW_H    = 36;
+const LIVE_ROW_H     = 52;
+const SCROLL_PANEL_H = 420;
+
 const ResultsScroll = ({ games }) => {
   if (games.length === 0) return (
     <div style={{ color: SUBTLE, fontSize: '13px', fontStyle: 'italic' }}>No results yet</div>
   );
 
-  // 3.85s per row — ~10% slower
+  const fits     = games.length * FINAL_ROW_H <= SCROLL_PANEL_H;
   const duration = games.length * 3.85;
+  const list     = fits ? games : [...games, ...games];
 
   return (
     <div style={{ height: '100%', overflow: 'hidden' }}>
-      <div style={{ animation: `scrollList ${duration}s linear infinite` }}>
-        {[...games, ...games].map((g, i) => (
+      <div style={fits ? undefined : { animation: `scrollList ${duration}s linear infinite` }}>
+        {list.map((g, i) => (
           <FinalGameRow key={`${g.gamePk}-${i}`} game={g} />
         ))}
       </div>
@@ -811,13 +818,14 @@ const ResultsScroll = ({ games }) => {
 const LiveGamesScroll = ({ games }) => {
   if (games.length === 0) return null;
 
-  // 4.4s per row — ~10% slower
+  const fits     = games.length * LIVE_ROW_H <= SCROLL_PANEL_H;
   const duration = games.length * 4.4;
+  const list     = fits ? games : [...games, ...games];
 
   return (
     <div style={{ height: '100%', overflow: 'hidden' }}>
-      <div style={{ animation: `scrollList ${duration}s linear infinite` }}>
-        {[...games, ...games].map((g, i) => (
+      <div style={fits ? undefined : { animation: `scrollList ${duration}s linear infinite` }}>
+        {list.map((g, i) => (
           <LiveGameRow key={`${g.gamePk}-${i}`} game={g} />
         ))}
       </div>
