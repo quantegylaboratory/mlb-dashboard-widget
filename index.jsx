@@ -1,11 +1,12 @@
 import { React, run } from 'uebersicht';
-const { useState } = React;
+const { useState, useEffect, useRef } = React;
 
 export const command = 'python3 ~/Library/Application\\ Support/Übersicht/widgets/mets-dashboard.widget/dashboard.py';
 export const refreshFrequency = 15 * 1000;  // Python handles TTL — fast when live, cached when idle
 
 export const className = `
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 1200px; height: 480px;
   * { box-sizing: border-box; }
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -1014,15 +1015,22 @@ const WidgetRoot = ({ output, error }) => {
   const widgetY     = liveCfg.widget_y     ?? 50;
   const widgetWidth = liveCfg.widget_width ?? 1200;
 
+  // Push position/size onto the Übersicht container element directly —
+  // inline styles beat className CSS, so this overrides the static defaults.
+  const rootRef = useRef(null);
+  useEffect(() => {
+    const parent = rootRef.current?.parentElement;
+    if (!parent) return;
+    parent.style.left      = `${widgetX}%`;
+    parent.style.top       = `${widgetY}%`;
+    parent.style.width     = `${widgetWidth}px`;
+    parent.style.transform = 'translate(-50%, -50%)';
+  }, [widgetX, widgetY, widgetWidth]);
+
   return (
-    <div style={{
-      position: 'fixed',
-      left: `${widgetX}%`,
-      top: `${widgetY}%`,
-      transform: 'translate(-50%, -50%)',
-      width: `${widgetWidth}px`,
-      height: '480px',
+    <div ref={rootRef} style={{
       display: 'flex', gap: '10px',
+      height: '100%',
       fontFamily: FONTS[liveCfg.font_family] || FONTS['sf-pro'],
       color: TEXT,
       zoom: fontScale,
