@@ -54,7 +54,7 @@ const BORDER = 'rgba(0,45,114,0.7)';
 const DEFAULT_CONFIG = {
   bg_opacity: 0.88, border_enabled: true, border_width: 1,
   border_hue: 216,  border_opacity: 0.7,  border_radius: 14, blur: 20,
-  font_family: 'sf-pro',
+  font_family: 'sf-pro', font_scale: 1.0, text_hue: 0, text_sat: 0,
 };
 
 const FONTS = {
@@ -230,7 +230,7 @@ const UpNextBlock = ({ game }) => {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '4px' }}>
         <TeamLogo teamId={opp.team.id} size={29} />
         <div style={{ textAlign: 'left' }}>
-          <div style={{ fontSize: '16px', fontWeight: 700, color: '#fff', lineHeight: 1 }}>
+          <div style={{ fontSize: '16px', fontWeight: 700, color: 'inherit', lineHeight: 1 }}>
             {day} · {date}
           </div>
           <div style={{ fontSize: '13px', color: SUBTLE, marginTop: '3px' }}>
@@ -390,14 +390,14 @@ const MetsCard = ({ game, featuredTeamId }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{
             fontSize: '38px', fontWeight: 900, lineHeight: 1,
-            color: metsWon ? ORANGE : metsLost ? SUBTLE : '#fff',
+            color: metsWon ? ORANGE : metsLost ? SUBTLE : 'inherit',
           }}>{hasScore ? mets.score : '–'}</span>
           <span style={{ fontSize: '19px', color: SUBTLE, fontWeight: 300 }}>
             {metsIsAway ? '@' : 'vs'}
           </span>
           <span style={{
             fontSize: '38px', fontWeight: 900, lineHeight: 1,
-            color: metsLost ? '#fff' : metsWon ? SUBTLE : '#fff',
+            color: metsLost ? 'inherit' : metsWon ? SUBTLE : 'inherit',
           }}>{hasScore ? opp.score : '–'}</span>
         </div>
 
@@ -476,7 +476,7 @@ const GameRow = ({ game }) => {
 
       {/* Score — thin weight, centered */}
       <div style={{
-        fontSize: '14px', fontWeight: 300, color: '#fff',
+        fontSize: '14px', fontWeight: 300, color: 'inherit',
         width: '64px', textAlign: 'center', letterSpacing: '1px',
         flexShrink: 0, fontVariantNumeric: 'tabular-nums',
       }}>
@@ -558,7 +558,7 @@ const ScheduleGameRow = ({ game, last, teamRecords, featuredTeamId }) => {
             {metsIsAway ? '@' : 'vs'}
           </span>
           <TeamLogo teamId={opp.team.id} size={21} />
-          <span style={{ fontSize: '17px', fontWeight: 600, color: '#fff', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: '17px', fontWeight: 600, color: 'inherit', whiteSpace: 'nowrap' }}>
             {nickname(opp.team.name)}
           </span>
           {oppRec && (
@@ -722,7 +722,7 @@ const LiveGameRow = ({ game }) => {
           </span>
         </div>
         <div style={{
-          fontSize: '14px', fontWeight: 300, color: '#fff',
+          fontSize: '14px', fontWeight: 300, color: 'inherit',
           width: '50px', textAlign: 'center',
           fontVariantNumeric: 'tabular-nums', flexShrink: 0,
         }}>
@@ -766,14 +766,14 @@ const FinalGameRow = ({ game }) => {
       {/* Left — winner */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1 }}>
         <TeamLogo teamId={left.team.id} size={tied ? 16 : 18} />
-        <span style={{ fontSize: tied ? '14px' : '16px', fontWeight: 700, color: '#fff' }}>
+        <span style={{ fontSize: tied ? '14px' : '16px', fontWeight: 700, color: 'inherit' }}>
           {abbr(left.team.name)}
         </span>
       </div>
 
       {/* Score — winner's run total first */}
       <div style={{
-        fontSize: '14px', fontWeight: 300, color: '#fff',
+        fontSize: '14px', fontWeight: 300, color: 'inherit',
         width: '50px', textAlign: 'center',
         fontVariantNumeric: 'tabular-nums', flexShrink: 0,
       }}>
@@ -835,7 +835,7 @@ const SettingRow = ({ label, value, children }) => (
   <div style={{ marginBottom: '13px' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
       <span style={{ fontSize: '11px', color: SUBTLE, letterSpacing: '0.4px' }}>{label}</span>
-      <span style={{ fontSize: '11px', color: '#fff', fontVariantNumeric: 'tabular-nums' }}>{value}</span>
+      <span style={{ fontSize: '11px', color: 'inherit', fontVariantNumeric: 'tabular-nums' }}>{value}</span>
     </div>
     {children}
   </div>
@@ -871,7 +871,7 @@ const SettingsPanel = ({ cfg, onUpdate, onClose }) => {
     }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-        <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.4px', color: '#fff' }}>APPEARANCE</div>
+        <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.4px', color: 'inherit' }}>APPEARANCE</div>
         <div onClick={onClose} style={{ cursor: 'pointer', color: SUBTLE, fontSize: '15px', padding: '2px 4px', userSelect: 'none' }}>✕</div>
       </div>
 
@@ -959,6 +959,12 @@ const WidgetRoot = ({ output, error }) => {
     ? `${liveCfg.border_width}px solid hsla(${liveCfg.border_hue},80%,30%,${liveCfg.border_opacity})`
     : 'none';
 
+  const fontScale = liveCfg.font_scale ?? 1.0;
+  const textSat   = liveCfg.text_sat   ?? 0;
+  const TEXT      = textSat > 0
+    ? `hsl(${liveCfg.text_hue ?? 0}, ${textSat}%, 90%)`
+    : '#ffffff';
+
   const panelStyle = {
     background: `rgba(8,12,24,${liveCfg.bg_opacity})`,
     borderRadius: `${liveCfg.border_radius}px`,
@@ -1008,7 +1014,8 @@ const WidgetRoot = ({ output, error }) => {
       display: 'flex', gap: '10px',
       height: '100%',
       fontFamily: FONTS[liveCfg.font_family] || FONTS['sf-pro'],
-      color: '#fff',
+      color: TEXT,
+      zoom: fontScale,
       WebkitFontSmoothing: 'antialiased',
       position: 'relative',
     }}>

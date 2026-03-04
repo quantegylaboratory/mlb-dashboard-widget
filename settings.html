@@ -600,6 +600,41 @@
       </div>
     </div>
 
+    <!-- FONT SIZE -->
+    <div class="section">
+      <div class="section-label">Font Size</div>
+
+      <div class="row">
+        <div class="row-label">Scale</div>
+        <div class="row-control">
+          <input type="range" id="font_scale" min="0.75" max="1.40" step="0.05">
+          <span class="val-badge" id="font_scale_val"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXT COLOR -->
+    <div class="section">
+      <div class="section-label">Text Color</div>
+
+      <div class="row">
+        <div class="row-label">Hue</div>
+        <div class="row-control">
+          <input type="range" id="text_hue" min="0" max="360" step="1" class="hue-slider">
+          <div class="color-swatch" id="text_swatch"></div>
+          <span class="val-badge" id="text_hue_val"></span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">Saturation</div>
+        <div class="row-control">
+          <input type="range" id="text_sat" min="0" max="100" step="1">
+          <span class="val-badge" id="text_sat_val"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- TYPOGRAPHY -->
     <div class="section">
       <div class="section-label">Typography</div>
@@ -647,6 +682,9 @@ const DEFAULTS = {
   blur:             20,
   font_family:      'sf-pro',
   featured_team_id: 121,
+  font_scale:       1.0,
+  text_hue:         0,
+  text_sat:         0,
 };
 
 const NL_TEAMS = [
@@ -695,6 +733,9 @@ const SLIDERS = [
   { id: 'border_hue',     fmt: v => `${Math.round(v)}°` },
   { id: 'border_opacity', fmt: v => v.toFixed(2) },
   { id: 'border_radius',  fmt: v => `${v}px`     },
+  { id: 'font_scale',     fmt: v => `${Math.round(v * 100)}%` },
+  { id: 'text_hue',       fmt: v => `${Math.round(v)}°`       },
+  { id: 'text_sat',       fmt: v => `${Math.round(v)}%`        },
 ];
 
 // ── Init ──────────────────────────────────────────────────────────────────────
@@ -732,6 +773,14 @@ function syncBadge(id, val) {
     const swatch = el('border_swatch');
     if (swatch) swatch.style.background = `hsl(${val},80%,35%)`;
   }
+  if (id === 'text_hue' || id === 'text_sat') {
+    const swatch = el('text_swatch');
+    if (swatch) {
+      const hue = parseFloat(el('text_hue')?.value ?? 0);
+      const sat = parseFloat(el('text_sat')?.value ?? 0);
+      swatch.style.background = sat > 0 ? `hsl(${hue}, ${sat}%, 90%)` : '#ffffff';
+    }
+  }
 }
 
 // ── Preview panel ─────────────────────────────────────────────────────────────
@@ -746,9 +795,17 @@ function updatePreview(c) {
   box.style.borderRadius   = `${c.border_radius}px`;
   box.style.backdropFilter = `blur(${c.blur}px)`;
   const fontCss = (FONTS.find(f => f.key === (c.font_family || 'sf-pro')) || FONTS[0]).css;
-  box.style.fontFamily              = fontCss;
+  box.style.fontFamily = fontCss;
+  const textSat   = c.text_sat ?? 0;
+  const textColor = textSat > 0 ? `hsl(${c.text_hue ?? 0}, ${textSat}%, 90%)` : '#ffffff';
+  box.style.color  = textColor;
   const fp = el('font-preview-text');
-  if (fp) fp.style.fontFamily       = fontCss;
+  if (fp) {
+    fp.style.fontFamily    = fontCss;
+    fp.style.color         = textColor;
+    fp.style.transform     = `scale(${c.font_scale ?? 1.0})`;
+    fp.style.transformOrigin = 'left center';
+  }
 }
 
 // ── Border sub-controls dim when border disabled ──────────────────────────────

@@ -61,6 +61,9 @@ DEFAULT_CONFIG = {
     "blur": 20,
     "font_family": "sf-pro",
     "featured_team_id": 121,
+    "font_scale": 1.0,
+    "text_hue": 0,
+    "text_sat": 0,
 }
 
 
