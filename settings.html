@@ -632,6 +632,35 @@
       </div>
     </div>
 
+    <!-- POSITION & SIZE -->
+    <div class="section">
+      <div class="section-label">Position &amp; Size</div>
+
+      <div class="row">
+        <div class="row-label">Horizontal (X)</div>
+        <div class="row-control">
+          <input type="range" id="widget_x" min="0" max="100" step="0.5">
+          <span class="val-badge" id="widget_x_val"></span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">Vertical (Y)</div>
+        <div class="row-control">
+          <input type="range" id="widget_y" min="0" max="100" step="0.5">
+          <span class="val-badge" id="widget_y_val"></span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">Width</div>
+        <div class="row-control">
+          <input type="range" id="widget_width" min="400" max="2000" step="20">
+          <span class="val-badge" id="widget_width_val"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- FONT SIZE -->
     <div class="section">
       <div class="section-label">Font Size</div>
@@ -721,6 +750,9 @@ const DEFAULTS = {
   show_upcoming:    true,
   show_live:        true,
   show_standings:   true,
+  widget_x:         50,
+  widget_y:         50,
+  widget_width:     1200,
 };
 
 const NL_TEAMS = [
@@ -772,6 +804,9 @@ const SLIDERS = [
   { id: 'font_scale',     fmt: v => `${Math.round(v * 100)}%` },
   { id: 'text_hue',       fmt: v => `${Math.round(v)}°`       },
   { id: 'text_sat',       fmt: v => `${Math.round(v)}%`        },
+  { id: 'widget_x',       fmt: v => `${v.toFixed(1)}%`         },
+  { id: 'widget_y',       fmt: v => `${v.toFixed(1)}%`         },
+  { id: 'widget_width',   fmt: v => `${Math.round(v)}px`       },
 ];
 
 // ── Init ──────────────────────────────────────────────────────────────────────

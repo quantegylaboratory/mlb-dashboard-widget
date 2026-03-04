@@ -68,6 +68,9 @@ DEFAULT_CONFIG = {
     "show_upcoming": True,
     "show_live": True,
     "show_standings": True,
+    "widget_x": 50,
+    "widget_y": 50,
+    "widget_width": 1200,
 }
 
 

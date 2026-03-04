@@ -4,46 +4,53 @@ const { useState } = React;
 export const command = 'python3 ~/Library/Application\\ Support/Übersicht/widgets/mets-dashboard.widget/dashboard.py';
 export const refreshFrequency = 15 * 1000;  // Python handles TTL — fast when live, cached when idle
 
-export const className = `
-  width: 1200px;
-  height: 480px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  * { box-sizing: border-box; }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-  @keyframes livePulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.35; }
-  }
-  @keyframes fadeSlide {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes scrollList {
-    from { transform: translateY(0); }
-    to   { transform: translateY(-50%); }
-  }
-  input[type=range] {
-    -webkit-appearance: none; width: 100%; height: 3px;
-    background: rgba(255,255,255,0.18); border-radius: 2px;
-    outline: none; cursor: pointer; margin: 4px 0;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 13px; height: 13px;
-    border-radius: 50%; background: #fff; cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
-  }
-  .hue-slider {
-    background: linear-gradient(to right,
-      hsl(0,80%,35%), hsl(45,80%,35%), hsl(90,80%,35%), hsl(135,80%,35%),
-      hsl(180,80%,35%), hsl(225,80%,35%), hsl(270,80%,35%), hsl(315,80%,35%), hsl(360,80%,35%)
-    ) !important;
-  }
-  input[type=checkbox] { cursor: pointer; accent-color: #FF5910; }
-`;
+export const className = ({ output }) => {
+  let cfg = {};
+  try { cfg = JSON.parse(output)?.config ?? {}; } catch(e) {}
+  const x = cfg.widget_x     ?? 50;
+  const y = cfg.widget_y     ?? 50;
+  const w = cfg.widget_width ?? 1200;
+  return `
+    width: ${w}px;
+    height: 480px;
+    left: ${x}%;
+    top: ${y}%;
+    transform: translate(-50%, -50%);
+    * { box-sizing: border-box; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scrollList {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+    input[type=range] {
+      -webkit-appearance: none; width: 100%; height: 3px;
+      background: rgba(255,255,255,0.18); border-radius: 2px;
+      outline: none; cursor: pointer; margin: 4px 0;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 13px; height: 13px;
+      border-radius: 50%; background: #fff; cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+    .hue-slider {
+      background: linear-gradient(to right,
+        hsl(0,80%,35%), hsl(45,80%,35%), hsl(90,80%,35%), hsl(135,80%,35%),
+        hsl(180,80%,35%), hsl(225,80%,35%), hsl(270,80%,35%), hsl(315,80%,35%), hsl(360,80%,35%)
+      ) !important;
+    }
+    input[type=checkbox] { cursor: pointer; accent-color: #FF5910; }
+  `;
+};
 
 const ORANGE = '#FF5910';
 const GREEN  = '#2ecc71';
