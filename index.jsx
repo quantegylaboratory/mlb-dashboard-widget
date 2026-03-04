@@ -965,6 +965,11 @@ const WidgetRoot = ({ output, error }) => {
     ? `hsl(${liveCfg.text_hue ?? 0}, ${textSat}%, 90%)`
     : '#ffffff';
 
+  const showFeatured  = liveCfg.show_featured  !== false;
+  const showUpcoming  = liveCfg.show_upcoming  !== false;
+  const showLive      = liveCfg.show_live      !== false;
+  const showStandings = liveCfg.show_standings !== false;
+
   const panelStyle = {
     background: `rgba(8,12,24,${liveCfg.bg_opacity})`,
     borderRadius: `${liveCfg.border_radius}px`,
@@ -1021,7 +1026,7 @@ const WidgetRoot = ({ output, error }) => {
     }}>
 
       {/* ── Mets Panel ── */}
-      <div style={{
+      {showFeatured && <div style={{
         ...panelStyle,
         width: '280px', flexShrink: 0,
         height: '100%',
@@ -1043,10 +1048,10 @@ const WidgetRoot = ({ output, error }) => {
         </div>
 
         <StandingsStrip standings={featuredDiv} featuredTeamId={featuredTeamId} />
-      </div>
+      </div>}
 
       {/* ── Mets Schedule Panel ── */}
-      <div style={{
+      {showUpcoming && <div style={{
         ...panelStyle,
         width: '280px', flexShrink: 0,
         height: '100%',
@@ -1080,10 +1085,10 @@ const WidgetRoot = ({ output, error }) => {
 
         {/* Bottom: monthly mini calendar */}
         <MonthCalendar scheduleMonth={scheduleMonth} today={today} />
-      </div>
+      </div>}
 
       {/* ── In Progress / Results Panel ── */}
-      <div style={{
+      {showLive && <div style={{
         ...panelStyle,
         width: '260px', flexShrink: 0, height: '100%',
         display: 'flex', flexDirection: 'column',
@@ -1103,10 +1108,10 @@ const WidgetRoot = ({ output, error }) => {
             : <ResultsScroll games={finalGames} />
           }
         </div>
-      </div>
+      </div>}
 
       {/* ── Standings Panel ── */}
-      <div style={{
+      {showStandings && <div style={{
         ...panelStyle,
         flex: 1, height: '100%',
         display: 'flex', flexDirection: 'column',
@@ -1121,7 +1126,7 @@ const WidgetRoot = ({ output, error }) => {
           <div style={{ width: '1px', background: BORDER, flexShrink: 0 }} />
           <LeagueCol label="American League" divisions={alStandings} featuredTeamId={featuredTeamId} />
         </div>
-      </div>
+      </div>}
 
     </div>
   );

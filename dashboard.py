@@ -64,6 +64,10 @@ DEFAULT_CONFIG = {
     "font_scale": 1.0,
     "text_hue": 0,
     "text_sat": 0,
+    "show_featured": True,
+    "show_upcoming": True,
+    "show_live": True,
+    "show_standings": True,
 }
 
 

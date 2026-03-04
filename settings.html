@@ -591,7 +591,39 @@
     <div class="section">
       <div class="section-label">Panels</div>
 
-      <div class="row">
+      <div class="toggle-row">
+        <span class="toggle-label">Featured Team</span>
+        <label class="toggle">
+          <input type="checkbox" id="show_featured">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Upcoming</span>
+        <label class="toggle">
+          <input type="checkbox" id="show_upcoming">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Live / Results</span>
+        <label class="toggle">
+          <input type="checkbox" id="show_live">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Standings</span>
+        <label class="toggle">
+          <input type="checkbox" id="show_standings">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:14px">
         <div class="row-label">Corner Radius</div>
         <div class="row-control">
           <input type="range" id="border_radius" min="0" max="30" step="1">
@@ -685,6 +717,10 @@ const DEFAULTS = {
   font_scale:       1.0,
   text_hue:         0,
   text_sat:         0,
+  show_featured:    true,
+  show_upcoming:    true,
+  show_live:        true,
+  show_standings:   true,
 };
 
 const NL_TEAMS = [
@@ -756,8 +792,12 @@ function applyToUI(c) {
     if (input) input.value = c[id];
     syncBadge(id, c[id]);
   });
-  el('border_enabled').checked = !!c.border_enabled;
+  el('border_enabled').checked  = !!c.border_enabled;
   updateBorderSub(!!c.border_enabled);
+  el('show_featured').checked   = c.show_featured  !== false;
+  el('show_upcoming').checked   = c.show_upcoming  !== false;
+  el('show_live').checked       = c.show_live      !== false;
+  el('show_standings').checked  = c.show_standings !== false;
   selectFont(c.font_family || 'sf-pro', false);
   selectTeam(c.featured_team_id || 121, false);
   updatePreview(c);
@@ -896,6 +936,13 @@ el('border_enabled').addEventListener('change', function () {
   updateBorderSub(this.checked);
   updatePreview(cfg);
   scheduleSave();
+});
+
+['show_featured', 'show_upcoming', 'show_live', 'show_standings'].forEach(id => {
+  el(id).addEventListener('change', function () {
+    cfg[id] = this.checked;
+    scheduleSave();
+  });
 });
 
 el('btn-reset').addEventListener('click', () => {
