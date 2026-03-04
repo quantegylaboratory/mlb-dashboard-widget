@@ -2,6 +2,8 @@
 
 A macOS desktop widget built with [Übersicht](https://tracesof.net/uebersicht/) that displays live MLB scores, standings, and a monthly schedule — focused on any team you choose.
 
+![MLB Dashboard Widget](screenshot.png)
+
 ## Features
 
 - **Featured Team panel** — live score or most recent result, inning/count/outs status, broadcast chips, division standings strip, and a monthly schedule calendar
