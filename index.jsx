@@ -1,12 +1,11 @@
 import { React, run } from 'uebersicht';
-const { useState, useEffect, useRef } = React;
+const { useState } = React;
 
 export const command = 'python3 ~/Library/Application\\ Support/Übersicht/widgets/mets-dashboard.widget/dashboard.py';
 export const refreshFrequency = 15 * 1000;  // Python handles TTL — fast when live, cached when idle
 
 export const className = `
-  top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 1200px; height: 480px;
+  top: 0; left: 0; width: 100%; height: 100%;
   * { box-sizing: border-box; }
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -1015,22 +1014,21 @@ const WidgetRoot = ({ output, error }) => {
   const widgetY     = liveCfg.widget_y     ?? 50;
   const widgetWidth = liveCfg.widget_width ?? 1200;
 
-  // Push position/size onto the Übersicht container element directly —
-  // inline styles beat className CSS, so this overrides the static defaults.
-  const rootRef = useRef(null);
-  useEffect(() => {
-    const parent = rootRef.current?.parentElement;
-    if (!parent) return;
-    parent.style.left      = `${widgetX}%`;
-    parent.style.top       = `${widgetY}%`;
-    parent.style.width     = `${widgetWidth}px`;
-    parent.style.transform = 'translate(-50%, -50%)';
-  }, [widgetX, widgetY, widgetWidth]);
+  // Compute pixel positions from actual screen dimensions — avoids CSS % / vh ambiguity.
+  const WIDGET_H = 480;
+  const screenW  = (typeof window !== 'undefined' && window.screen) ? window.screen.width  : 1440;
+  const screenH  = (typeof window !== 'undefined' && window.screen) ? window.screen.height : 900;
+  const leftPx   = Math.round(screenW * widgetX / 100 - widgetWidth / 2);
+  const topPx    = Math.round(screenH * widgetY / 100 - WIDGET_H   / 2);
 
   return (
-    <div ref={rootRef} style={{
+    <div style={{
+      position: 'absolute',
+      left: `${leftPx}px`,
+      top:  `${topPx}px`,
+      width: `${widgetWidth}px`,
+      height: `${WIDGET_H}px`,
       display: 'flex', gap: '10px',
-      height: '100%',
       fontFamily: FONTS[liveCfg.font_family] || FONTS['sf-pro'],
       color: TEXT,
       zoom: fontScale,
