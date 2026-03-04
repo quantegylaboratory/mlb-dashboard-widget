@@ -26,7 +26,7 @@ pip3 install requests
 
 ```bash
 cd ~/Library/Application\ Support/Übersicht/widgets/
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME mets-dashboard.widget
+git clone https://github.com/quantegylaboratory/mlb-dashboard-widget mets-dashboard.widget
 ```
 
 2. Übersicht picks up the widget automatically. It refreshes every 15 seconds (Python-level caching handles API throttling).
@@ -77,6 +77,31 @@ Settings are saved to `config.json` in the widget directory and take effect with
 | BG | `rgba(8,12,24,0.88)` | Panel background |
 | SUBTLE | `rgba(255,255,255,0.62)` | Secondary text |
 | GREEN | `#2ecc71` | Live game indicators |
+
+## Publishing to the Übersicht Widget Gallery
+
+The [Übersicht widget gallery](https://tracesof.net/uebersicht-widgets/) is community-maintained via GitHub. To submit this widget:
+
+1. Fork [felixhageloh/uebersicht-widgets](https://github.com/felixhageloh/uebersicht-widgets)
+2. Add an entry to `widgets.json` in this format:
+
+```json
+{
+  "name": "MLB Dashboard",
+  "description": "Live MLB scores, standings, and schedule for any team. Featured team, upcoming games, league-wide live scores, full standings, and a monthly calendar — with a settings UI to customize appearance and pick your team.",
+  "author": "quantegylaboratory",
+  "authorUrl": "https://github.com/quantegylaboratory",
+  "screenshot": "mlb-dashboard.png",
+  "url": "https://github.com/quantegylaboratory/mlb-dashboard-widget"
+}
+```
+
+3. Add a screenshot (`mlb-dashboard.png`) to the `screenshots/` folder in your fork
+4. Open a pull request against `felixhageloh/uebersicht-widgets`
+
+## Repository
+
+**https://github.com/quantegylaboratory/mlb-dashboard-widget**
 
 ## License
 
