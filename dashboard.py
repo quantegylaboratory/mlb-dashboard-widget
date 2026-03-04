@@ -48,7 +48,7 @@ TEAM_ABBRS = {
     117: "HOU", 108: "LAA", 133: "OAK", 136: "SEA", 140: "TEX",
 }
 
-CACHE_FILE     = "/tmp/mets_widget_cache.json"
+CACHE_FILE     = "/tmp/mlb_dashboard_cache.json"
 CONFIG_FILE    = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
 DEFAULT_CONFIG = {

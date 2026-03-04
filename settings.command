@@ -4,16 +4,16 @@
 
 WIDGET_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PORT=1986
-PID_FILE="/tmp/mets_settings_server.pid"
-LOG_FILE="/tmp/mets_settings_server.log"
+PID_FILE="/tmp/mlb_dashboard_server.pid"
+LOG_FILE="/tmp/mlb_dashboard_server.log"
 URL="http://localhost:${PORT}"
 
 # ── Check if server is already running on this port ──────────────────────────
 if lsof -ti tcp:${PORT} >/dev/null 2>&1; then
   echo "Server already running on port ${PORT}."
 else
-  echo "Starting Mets Widget settings server on port ${PORT}..."
-  nohup python3 "${WIDGET_DIR}/mets.py" --serve \
+  echo "Starting MLB Dashboard settings server on port ${PORT}..."
+  nohup python3 "${WIDGET_DIR}/dashboard.py" --serve \
     > "${LOG_FILE}" 2>&1 &
   echo $! > "${PID_FILE}"
 

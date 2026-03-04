@@ -1,7 +1,7 @@
 import { React, run } from 'uebersicht';
 const { useState } = React;
 
-export const command = 'python3 ~/Library/Application\\ Support/Übersicht/widgets/mets-dashboard.widget/mets.py';
+export const command = 'python3 ~/Library/Application\\ Support/Übersicht/widgets/mets-dashboard.widget/dashboard.py';
 export const refreshFrequency = 15 * 1000;  // Python handles TTL — fast when live, cached when idle
 
 export const className = `
@@ -66,7 +66,7 @@ const FONTS = {
   'menlo':      '"Menlo", "SF Mono", Monaco, "Courier New", monospace',
 };
 
-const METS_PY = '~/Library/Application\\ Support/Übersicht/widgets/mets-dashboard.widget/mets.py';
+const DASHBOARD_PY = '~/Library/Application\\ Support/Übersicht/widgets/mets-dashboard.widget/dashboard.py';
 
 const TEAM_ABBR = {
   'New York Mets': 'NYM',       'New York Yankees': 'NYY',
@@ -108,7 +108,7 @@ const GAME_TYPE = {
 
 const STATE_ORDER = { Live: 0, Preview: 1, Final: 2 };
 
-// Division lookup (mirrors mets.py TEAM_TO_DIV / DIV_NAMES)
+// Division lookup (mirrors dashboard.py TEAM_TO_DIV / DIV_NAMES)
 const JS_TEAM_TO_DIV = {
   121:204, 143:204, 144:204, 146:204, 120:204,
   112:205, 138:205, 113:205, 158:205, 134:205,
@@ -951,7 +951,7 @@ const WidgetRoot = ({ output, error }) => {
   const saveConfig = newCfg => {
     setCfg(newCfg);
     const jsonStr = JSON.stringify(newCfg).replace(/'/g, "'\\''");
-    run(`python3 ${METS_PY} --write-config '${jsonStr}'`);
+    run(`python3 ${DASHBOARD_PY} --write-config '${jsonStr}'`);
   };
 
   // Derived panel styles from live config
