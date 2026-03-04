@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLB Dashboard · Settings</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:         #080c18;
+    --panel:      rgba(14, 20, 36, 0.95);
+    --border:     rgba(0, 45, 114, 0.55);
+    --orange:     #FF5910;
+    --blue:       #002D72;
+    --subtle:     rgba(255,255,255,0.55);
+    --text:       rgba(255,255,255,0.9);
+    --green:      #2ecc71;
+    --input-bg:   rgba(255,255,255,0.07);
+    --radius:     12px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px 60px;
+    min-height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(0,45,114,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,89,16,0.08) 0%, transparent 60%),
+      #080c18;
+  }
+
+  .card {
+    width: 480px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 22px 26px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #002D72, #003fa8);
+    border: 1px solid rgba(0,45,114,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .header-text p {
+    font-size: 12px;
+    color: var(--subtle);
+    margin-top: 2px;
+  }
+
+  .card-body {
+    padding: 10px 0;
+  }
+
+  .section {
+    padding: 16px 26px;
+  }
+
+  .section + .section {
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: var(--subtle);
+    margin-bottom: 14px;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .row:last-child {
+    margin-bottom: 0;
+  }
+
+  .row-label {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .row-control {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Range sliders */
+  input[type=range] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.15);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+
+  .hue-slider {
+    background: linear-gradient(to right,
+      hsl(0,80%,35%), hsl(30,80%,35%), hsl(60,80%,35%),
+      hsl(120,80%,35%), hsl(180,80%,35%), hsl(216,80%,35%),
+      hsl(270,80%,35%), hsl(300,80%,35%), hsl(360,80%,35%)
+    ) !important;
+  }
+
+  .val-badge {
+    font-size: 12px;
+    color: var(--subtle);
+    width: 36px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  /* Toggle / Checkbox */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .toggle-row:last-child { margin-bottom: 0; }
+
+  .toggle-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .toggle {
+    position: relative;
+    width: 38px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 11px;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle input:checked + .toggle-track {
+    background: var(--orange);
+  }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .toggle input:checked + .toggle-track::after {
+    transform: translateX(16px);
+  }
+
+  /* Preview panel */
+  .preview-wrap {
+    padding: 0 26px 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .preview-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: var(--subtle);
+    padding-top: 16px;
+    margin-bottom: 12px;
+  }
+
+  #preview-box {
+    width: 100%;
+    height: 72px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border 0.15s, border-radius 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #preview-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 8px,
+      transparent 8px,
+      transparent 16px
+    );
+  }
+
+  .preview-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.3px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Footer */
+  .card-footer {
+    padding: 16px 26px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+
+  .btn:active { transform: scale(0.96); }
+
+  .btn-ghost {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .btn-ghost:hover { background: rgba(255,255,255,0.13); }
+
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(255,89,16,0.35);
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46,204,113,0.4);
+    color: var(--green);
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    backdrop-filter: blur(20px);
+    white-space: nowrap;
+  }
+
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Disabled state for border sub-controls */
+  .border-sub {
+    transition: opacity 0.2s;
+  }
+
+  .border-sub.dimmed {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* Team picker */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .team-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 4px 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .team-btn:hover {
+    border-color: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08);
+  }
+
+  .team-btn.active {
+    border-color: var(--orange);
+    background: rgba(255,89,16,0.12);
+  }
+
+  .team-btn img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+  }
+
+  .team-btn-abbr {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .team-btn.active .team-btn-abbr {
+    color: var(--orange);
+  }
+
+  .league-group-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--subtle);
+    margin-bottom: 7px;
+    margin-top: 0;
+  }
+
+  .league-group-label.mt {
+    margin-top: 12px;
+  }
+
+  /* Font picker */
+  .font-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .font-card {
+    padding: 11px 12px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .font-card:hover {
+    border-color: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08);
+  }
+
+  .font-card.active {
+    border-color: var(--orange);
+    background: rgba(255,89,16,0.1);
+  }
+
+  .font-card-name {
+    font-size: 15px;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.2;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .font-card-score {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .font-card-tag {
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    color: var(--subtle);
+    margin-top: 3px;
+    font-family: -apple-system, sans-serif; /* always system font */
+  }
+
+  /* Font preview */
+  .font-preview-box {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(8,12,24,0.55);
+  }
+
+  .font-preview-header {
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+    font-family: -apple-system, sans-serif;
+  }
+
+  #font-preview-text {
+    line-height: 1.5;
+  }
+
+  .fpt-team  { font-size: 10px; color: var(--subtle); letter-spacing: 1.5px; text-transform: uppercase; }
+  .fpt-score { font-size: 22px; font-weight: 700; color: #fff; }
+  .fpt-info  { font-size: 11px; color: #2ecc71; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="logo-mark">⚾</div>
+    <div class="header-text">
+      <h1>MLB Dashboard</h1>
+      <p>Appearance settings · localhost:1986</p>
+    </div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- FEATURED TEAM -->
+    <div class="section">
+      <div class="section-label">Featured Team</div>
+      <div class="league-group-label">National League</div>
+      <div class="team-grid" id="nl-team-grid"></div>
+      <div class="league-group-label mt">American League</div>
+      <div class="team-grid" id="al-team-grid"></div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="section">
+      <div class="section-label">Background</div>
+
+      <div class="row">
+        <div class="row-label">Opacity</div>
+        <div class="row-control">
+          <input type="range" id="bg_opacity" min="0" max="1" step="0.01">
+          <span class="val-badge" id="bg_opacity_val"></span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">Backdrop Blur</div>
+        <div class="row-control">
+          <input type="range" id="blur" min="0" max="60" step="1">
+          <span class="val-badge" id="blur_val"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BORDER -->
+    <div class="section">
+      <div class="section-label">Border</div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Show Border</span>
+        <label class="toggle">
+          <input type="checkbox" id="border_enabled">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="border-sub" id="border_sub">
+        <div class="row">
+          <div class="row-label">Thickness</div>
+          <div class="row-control">
+            <input type="range" id="border_width" min="0" max="6" step="0.5">
+            <span class="val-badge" id="border_width_val"></span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="row-label">Color</div>
+          <div class="row-control">
+            <input type="range" id="border_hue" min="0" max="360" step="1" class="hue-slider">
+            <div class="color-swatch" id="border_swatch"></div>
+            <span class="val-badge" id="border_hue_val"></span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="row-label">Opacity</div>
+          <div class="row-control">
+            <input type="range" id="border_opacity" min="0" max="1" step="0.01">
+            <span class="val-badge" id="border_opacity_val"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANELS -->
+    <div class="section">
+      <div class="section-label">Panels</div>
+
+      <div class="row">
+        <div class="row-label">Corner Radius</div>
+        <div class="row-control">
+          <input type="range" id="border_radius" min="0" max="30" step="1">
+          <span class="val-badge" id="border_radius_val"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TYPOGRAPHY -->
+    <div class="section">
+      <div class="section-label">Typography</div>
+      <div class="font-grid" id="font-grid">
+        <!-- populated by JS -->
+      </div>
+      <div class="font-preview-box">
+        <div class="font-preview-header">Live preview</div>
+        <div id="font-preview-text">
+          <div class="fpt-team">NY Mets</div>
+          <div class="fpt-score">NYM &nbsp;7 – 3&nbsp; ATL</div>
+          <div class="fpt-info">▲ 7th &middot; 1–2 &middot; 2 outs</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /card-body -->
+
+  <!-- PREVIEW -->
+  <div class="preview-wrap">
+    <div class="preview-label">Preview</div>
+    <div id="preview-box">
+      <span class="preview-text">Panel preview</span>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button class="btn btn-ghost" id="btn-reset">Reset to defaults</button>
+    <button class="btn btn-primary" id="btn-save">Save &amp; Apply</button>
+  </div>
+</div>
+
+<div id="toast">✓ Saved</div>
+
+<script>
+const API = 'http://localhost:1986';
+
+const DEFAULTS = {
+  bg_opacity:       0.88,
+  border_enabled:   true,
+  border_width:     1,
+  border_hue:       216,
+  border_opacity:   0.7,
+  border_radius:    14,
+  blur:             20,
+  font_family:      'sf-pro',
+  featured_team_id: 121,
+};
+
+const NL_TEAMS = [
+  { id: 121, abbr: 'NYM', espn: 'nym' }, { id: 143, abbr: 'PHI', espn: 'phi' },
+  { id: 144, abbr: 'ATL', espn: 'atl' }, { id: 146, abbr: 'MIA', espn: 'mia' },
+  { id: 120, abbr: 'WSH', espn: 'wsh' }, { id: 112, abbr: 'CHC', espn: 'chc' },
+  { id: 138, abbr: 'STL', espn: 'stl' }, { id: 113, abbr: 'CIN', espn: 'cin' },
+  { id: 158, abbr: 'MIL', espn: 'mil' }, { id: 134, abbr: 'PIT', espn: 'pit' },
+  { id: 119, abbr: 'LAD', espn: 'lad' }, { id: 135, abbr: 'SD',  espn: 'sd'  },
+  { id: 137, abbr: 'SF',  espn: 'sf'  }, { id: 115, abbr: 'COL', espn: 'col' },
+  { id: 109, abbr: 'ARI', espn: 'ari' },
+];
+
+const AL_TEAMS = [
+  { id: 147, abbr: 'NYY', espn: 'nyy' }, { id: 111, abbr: 'BOS', espn: 'bos' },
+  { id: 141, abbr: 'TOR', espn: 'tor' }, { id: 110, abbr: 'BAL', espn: 'bal' },
+  { id: 139, abbr: 'TB',  espn: 'tb'  }, { id: 114, abbr: 'CLE', espn: 'cle' },
+  { id: 145, abbr: 'CWS', espn: 'chw' }, { id: 142, abbr: 'MIN', espn: 'min' },
+  { id: 116, abbr: 'DET', espn: 'det' }, { id: 118, abbr: 'KC',  espn: 'kc'  },
+  { id: 117, abbr: 'HOU', espn: 'hou' }, { id: 108, abbr: 'LAA', espn: 'laa' },
+  { id: 133, abbr: 'OAK', espn: 'oak' }, { id: 136, abbr: 'SEA', espn: 'sea' },
+  { id: 140, abbr: 'TEX', espn: 'tex' },
+];
+
+const FONTS = [
+  { key: 'sf-pro',     label: 'SF Pro',        tag: 'System default', score: '7 – 3', css: '-apple-system, "SF Pro Display", "Helvetica Neue", sans-serif' },
+  { key: 'sf-rounded', label: 'SF Rounded',    tag: 'Soft & rounded', score: '7 – 3', css: '"SF Pro Rounded", -apple-system, sans-serif' },
+  { key: 'helvetica',  label: 'Helvetica',     tag: 'Classic Swiss',  score: '7 – 3', css: '"Helvetica Neue", Helvetica, Arial, sans-serif' },
+  { key: 'futura',     label: 'Futura',        tag: 'Sporty & bold',  score: '7 – 3', css: 'Futura, "Century Gothic", "Trebuchet MS", sans-serif' },
+  { key: 'georgia',    label: 'Georgia',       tag: 'Editorial serif', score: '7 – 3', css: 'Georgia, "Times New Roman", serif' },
+  { key: 'menlo',      label: 'Menlo',         tag: 'Scoreboard mono', score: '7–3',  css: '"Menlo", "SF Mono", Monaco, "Courier New", monospace' },
+];
+
+// Live state
+let cfg = { ...DEFAULTS };
+let saveTimer = null;
+
+// ── DOM refs ──────────────────────────────────────────────────────────────────
+
+const el = id => document.getElementById(id);
+
+const SLIDERS = [
+  { id: 'bg_opacity',     fmt: v => v.toFixed(2) },
+  { id: 'blur',           fmt: v => `${v}px`     },
+  { id: 'border_width',   fmt: v => `${v}px`     },
+  { id: 'border_hue',     fmt: v => `${Math.round(v)}°` },
+  { id: 'border_opacity', fmt: v => v.toFixed(2) },
+  { id: 'border_radius',  fmt: v => `${v}px`     },
+];
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+async function init() {
+  try {
+    const r = await fetch(`${API}/config`);
+    if (r.ok) cfg = { ...DEFAULTS, ...await r.json() };
+  } catch (e) {
+    console.warn('Could not fetch config, using defaults');
+  }
+  applyToUI(cfg);
+}
+
+function applyToUI(c) {
+  SLIDERS.forEach(({ id }) => {
+    const input = el(id);
+    if (input) input.value = c[id];
+    syncBadge(id, c[id]);
+  });
+  el('border_enabled').checked = !!c.border_enabled;
+  updateBorderSub(!!c.border_enabled);
+  selectFont(c.font_family || 'sf-pro', false);
+  selectTeam(c.featured_team_id || 121, false);
+  updatePreview(c);
+}
+
+// ── Sync badge + swatch ───────────────────────────────────────────────────────
+
+function syncBadge(id, val) {
+  const s = SLIDERS.find(s => s.id === id);
+  const badge = el(`${id}_val`);
+  if (badge && s) badge.textContent = s.fmt(parseFloat(val));
+  if (id === 'border_hue') {
+    const swatch = el('border_swatch');
+    if (swatch) swatch.style.background = `hsl(${val},80%,35%)`;
+  }
+}
+
+// ── Preview panel ─────────────────────────────────────────────────────────────
+
+function updatePreview(c) {
+  const box = el('preview-box');
+  const border = c.border_enabled
+    ? `${c.border_width}px solid hsla(${c.border_hue},80%,30%,${c.border_opacity})`
+    : 'none';
+  box.style.background     = `rgba(8,12,24,${c.bg_opacity})`;
+  box.style.border         = border;
+  box.style.borderRadius   = `${c.border_radius}px`;
+  box.style.backdropFilter = `blur(${c.blur}px)`;
+  const fontCss = (FONTS.find(f => f.key === (c.font_family || 'sf-pro')) || FONTS[0]).css;
+  box.style.fontFamily              = fontCss;
+  const fp = el('font-preview-text');
+  if (fp) fp.style.fontFamily       = fontCss;
+}
+
+// ── Border sub-controls dim when border disabled ──────────────────────────────
+
+function updateBorderSub(enabled) {
+  el('border_sub').classList.toggle('dimmed', !enabled);
+}
+
+// ── Font picker ───────────────────────────────────────────────────────────────
+
+function buildFontGrid() {
+  const grid = el('font-grid');
+  grid.innerHTML = '';
+  FONTS.forEach(font => {
+    const card = document.createElement('div');
+    card.className   = 'font-card';
+    card.dataset.key = font.key;
+    card.innerHTML   = `
+      <div class="font-card-name" style="font-family:${font.css}">${font.label}</div>
+      <div class="font-card-score" style="font-family:${font.css}">${font.score}</div>
+      <div class="font-card-tag">${font.tag}</div>
+    `;
+    card.addEventListener('click', () => {
+      selectFont(font.key, true);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function selectFont(key, andSave) {
+  const font = FONTS.find(f => f.key === key) || FONTS[0];
+  // Highlight active card
+  el('font-grid').querySelectorAll('.font-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.key === font.key);
+  });
+  // Apply to font preview text
+  const fp = el('font-preview-text');
+  if (fp) fp.style.fontFamily = font.css;
+  // Apply to panel preview
+  const box = el('preview-box');
+  if (box) box.style.fontFamily = font.css;
+  cfg.font_family = font.key;
+  if (andSave) scheduleSave();
+}
+
+// ── Team picker ───────────────────────────────────────────────────────────────
+
+function buildTeamGrid(teams, gridId) {
+  const grid = el(gridId);
+  grid.innerHTML = '';
+  teams.forEach(team => {
+    const btn = document.createElement('button');
+    btn.className      = 'team-btn';
+    btn.dataset.teamId = team.id;
+    btn.innerHTML = `
+      <img src="https://a.espncdn.com/i/teamlogos/mlb/500/${team.espn}.png" alt="${team.abbr}" onerror="this.style.display='none'">
+      <span class="team-btn-abbr">${team.abbr}</span>
+    `;
+    btn.addEventListener('click', () => selectTeam(team.id, true));
+    grid.appendChild(btn);
+  });
+}
+
+function selectTeam(teamId, andSave) {
+  cfg.featured_team_id = teamId;
+  document.querySelectorAll('.team-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.teamId) === teamId);
+  });
+  if (andSave) scheduleSave();
+}
+
+// ── Event listeners ───────────────────────────────────────────────────────────
+
+SLIDERS.forEach(({ id }) => {
+  const input = el(id);
+  if (!input) return;
+  input.addEventListener('input', () => {
+    const val = parseFloat(input.value);
+    cfg[id] = val;
+    syncBadge(id, val);
+    updatePreview(cfg);
+    scheduleSave();
+  });
+});
+
+el('border_enabled').addEventListener('change', function () {
+  cfg.border_enabled = this.checked;
+  updateBorderSub(this.checked);
+  updatePreview(cfg);
+  scheduleSave();
+});
+
+el('btn-reset').addEventListener('click', () => {
+  cfg = { ...DEFAULTS };
+  applyToUI(cfg);
+  save();
+});
+
+el('btn-save').addEventListener('click', () => {
+  clearTimeout(saveTimer);
+  save();
+});
+
+// ── Auto-save with debounce ───────────────────────────────────────────────────
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 600);
+}
+
+async function save() {
+  try {
+    const r = await fetch(`${API}/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cfg),
+    });
+    if (r.ok) showToast('✓ Saved');
+    else      showToast('⚠ Save failed');
+  } catch (e) {
+    showToast('⚠ Could not reach server');
+  }
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+
+let toastTimer = null;
+
+function showToast(msg) {
+  const t = el('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+
+buildTeamGrid(NL_TEAMS, 'nl-team-grid');
+buildTeamGrid(AL_TEAMS, 'al-team-grid');
+buildFontGrid();
+init();
+</script>
+</body>
+</html>

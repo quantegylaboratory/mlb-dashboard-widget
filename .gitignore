@@ -1,0 +1,12 @@
+# User settings — each user gets their own defaults
+config.json
+
+# Dev artifacts
+test.json
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
