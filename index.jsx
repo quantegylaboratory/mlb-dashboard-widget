@@ -531,7 +531,7 @@ const ScheduleGameRow = ({ game, last, teamRecords, featuredTeamId }) => {
   return (
     <div style={{
       display: 'flex', alignItems: 'center',
-      padding: '8px 2px',
+      padding: '5px 2px',
       borderBottom: last ? 'none' : `1px solid rgba(0,45,114,0.3)`,
       gap: '8px',
     }}>
@@ -602,39 +602,66 @@ const MonthCalendar = ({ scheduleMonth, today }) => {
   const firstR = (scheduleMonth || []).find(g => g.gameType === 'R');
   const openingDay = firstR ? firstR.date : null;
 
-  // Calendar grid
+  // Calendar grid — build full month, then window to 4 rows anchored to today's week
   const firstDow   = new Date(yr, mo - 1, 1).getDay(); // 0=Sun
   const daysInMonth = new Date(yr, mo, 0).getDate();
-  const cells = [];
-  for (let i = 0; i < firstDow; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-  while (cells.length % 7 !== 0) cells.push(null);
-  const numRows = cells.length / 7;
+  const allCells = [];
+  for (let i = 0; i < firstDow; i++) allCells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) allCells.push(d);
+  while (allCells.length % 7 !== 0) allCells.push(null);
+  const numRows = allCells.length / 7;
+
+  // Find which week row contains today (or default to 0)
+  const todayDay = today && today.startsWith(`${yr}-${String(mo).padStart(2,'0')}`)
+    ? parseInt(today.split('-')[2], 10) : null;
+  const todayCellIdx = todayDay !== null ? allCells.indexOf(todayDay) : 0;
+  const todayWeekRow = todayCellIdx >= 0 ? Math.floor(todayCellIdx / 7) : 0;
+  const VISIBLE_ROWS = 4;
+  const startRow = Math.max(0, Math.min(todayWeekRow, numRows - VISIBLE_ROWS));
+  const cells = allCells.slice(startRow * 7, (startRow + VISIBLE_ROWS) * 7);
 
   const monthLabel = new Date(yr, mo - 1, 1)
     .toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  // Week range label for subtitle (e.g. "Mar 10 – Apr 6")
+  const visibleDays = cells.filter(Boolean);
+  const firstVisible = visibleDays[0];
+  const lastVisible  = visibleDays[visibleDays.length - 1];
+  const pad = n => String(n).padStart(2, '0');
+  const fmtCell = d => new Date(yr, mo - 1, d)
+    .toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const weekRangeLabel = firstVisible != null && lastVisible != null
+    ? `${fmtCell(firstVisible)} – ${fmtCell(lastVisible)}` : '';
 
   const DOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
 
-      {/* Month label */}
-      <div style={{
-        textAlign: 'center', fontSize: '10px', fontWeight: 700,
-        letterSpacing: '0.12em', textTransform: 'uppercase',
-        color: 'rgba(255,255,255,0.45)', marginBottom: '5px', flexShrink: 0,
-      }}>
-        {monthLabel}
+      {/* Month label + week range */}
+      <div style={{ textAlign: 'center', marginBottom: '5px', flexShrink: 0 }}>
+        <div style={{
+          fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)',
+        }}>
+          {monthLabel}
+        </div>
+        {weekRangeLabel && (
+          <div style={{
+            fontSize: '8px', fontWeight: 400, color: 'rgba(255,255,255,0.25)',
+            letterSpacing: '0.05em', marginTop: '1px',
+          }}>
+            {weekRangeLabel}
+          </div>
+        )}
       </div>
 
-      {/* Grid: 1 header row + numRows data rows */}
+      {/* Grid: 1 header row + 4 fixed-height data rows */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(7, 1fr)',
-        gridTemplateRows: `14px repeat(${numRows}, 1fr)`,
-        flex: 1,
-        gap: '1px',
+        gridTemplateRows: `12px repeat(${VISIBLE_ROWS}, 40px)`,
+        gap: '2px',
       }}>
         {/* Day-of-week headers */}
         {DOW.map(d => (
@@ -648,7 +675,6 @@ const MonthCalendar = ({ scheduleMonth, today }) => {
         {cells.map((day, i) => {
           if (!day) return <div key={`e-${i}`} />;
 
-          const pad    = n => String(n).padStart(2, '0');
           const ds     = `${yr}-${pad(mo)}-${pad(day)}`;
           const game   = byDate[ds];
           const isToday    = ds === today;
@@ -1099,10 +1125,12 @@ const WidgetRoot = ({ output, error }) => {
         </div>
 
         {/* Separator */}
-        <div style={{ height: '1px', background: BORDER, margin: '8px -16px', flexShrink: 0 }} />
+        <div style={{ height: '1px', background: BORDER, margin: '5px -16px', flexShrink: 0 }} />
 
         {/* Bottom: monthly mini calendar */}
-        <MonthCalendar scheduleMonth={scheduleMonth} today={today} />
+        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', paddingBottom: '12px' }}>
+          <MonthCalendar scheduleMonth={scheduleMonth} today={today} />
+        </div>
       </div>}
 
       {/* ── In Progress / Results Panel ── */}
